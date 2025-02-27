@@ -40,7 +40,10 @@ steps:
       name: "Tailscale Up"
       command: |
         HOSTNAME="circleci-$(cat /etc/hostname)"
-        tailscale --socket=/tmp/tailscaled.sock up --authkey ${<< parameters.auth-key >>} --hostname=${HOSTNAME} --accept-routes --timeout=10s
+        for run in {1..10}; do
+          echo "Tailscale connection attempt #${run}"
+          tailscale --socket=/tmp/tailscaled.sock up --authkey ${<< parameters.auth-key >>} --hostname=${HOSTNAME} --accept-routes --timeout=10s
+        done
   - when:
       condition: << parameters.export-proxies >>
       steps:
